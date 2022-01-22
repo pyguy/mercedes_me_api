@@ -37,18 +37,18 @@ class MercedesMeData:
 
         # Prometheus metrics to collect
         self.metrics = {
-            'tanklevelpercent': Gauge('tank_level_percent', 'Liquid fuel tank level (Percent)'),
-            'doorstatusfrontleft': Enum('door_status_frontleft', 'Status of the front left door',states=['open','closed']),
-            'doorstatusfrontright': Enum('door_status_frontright', 'Status of the front right door',states=['open','closed']),
-            'doorstatusrearleft': Enum('door_status_rearleft', 'Status of the rear left door',states=['open','closed']),
-            'doorstatusrearright': Enum('door_status_rearright', 'Status of the rear right door',states=['open','closed']),
-            'interiorLightsFront': Enum('interior_lights_Front:', 'Status of the interior front light',states=['on','off']),
-            'interiorLightsRear': Enum('interior_lights_Rear', 'Status of the interior rear light',states=['on','off']),
-            'doorlockstatusvehicle': Gauge('door_lockstatus_vehicle', 'Vehicle lock status'),
-            'doorlockstatusdecklid': Enum('door_lockstatus_decklid', 'Lock status of the deck lid',states=['locked','unlocked']),
-            'doorlockstatusgas': Enum('door_lockstatus_gas', 'Status of gas tank door lock',states=['locked','unlocked']),
-            'positionHeading': Gauge('position_heading', 'Vehicle heading position (Degrees)'),
-            'odo': Gauge('odometer', 'Odometer (KM)')
+            'tanklevelpercent': Gauge('mercedes_tank_level_percent', 'Liquid fuel tank level (Percent)'),
+            'doorstatusfrontleft': Enum('mercedes_door_status_frontleft', 'Status of the front left door',states=['open','closed']),
+            'doorstatusfrontright': Enum('mercedes_door_status_frontright', 'Status of the front right door',states=['open','closed']),
+            'doorstatusrearleft': Enum('mercedes_door_status_rearleft', 'Status of the rear left door',states=['open','closed']),
+            'doorstatusrearright': Enum('mercedes_door_status_rearright', 'Status of the rear right door',states=['open','closed']),
+            'interiorLightsFront': Enum('mercedes_interior_lights_Front', 'Status of the interior front light',states=['on','off']),
+            'interiorLightsRear': Enum('mercedes_interior_lights_Rear', 'Status of the interior rear light',states=['on','off']),
+            'doorlockstatusvehicle': Gauge('mercedes_door_lockstatus_vehicle', 'Vehicle lock status'),
+            'doorlockstatusdecklid': Enum('mercedes_door_lockstatus_decklid', 'Lock status of the deck lid',states=['locked','unlocked']),
+            'doorlockstatusgas': Enum('mercedes_door_lockstatus_gas', 'Status of gas tank door lock',states=['locked','unlocked']),
+            'positionHeading': Gauge('mercedes_position_heading', 'Vehicle heading position (Degrees)'),
+            'odo': Gauge('mercedes_odometer', 'Odometer (KM)')
         }
         self.pending_requests = Gauge("app_requests_pending", "Pending requests")
         self.total_uptime = Gauge("app_uptime", "Uptime")
