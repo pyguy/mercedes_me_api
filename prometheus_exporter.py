@@ -42,7 +42,7 @@ class MercedesMeData:
             'doorstatusfrontright': Enum('door_status_frontright', 'Status of the front right door',states=['open','closed']),
             'doorstatusrearleft': Enum('door_status_rearleft', 'Status of the rear left door',states=['open','closed']),
             'doorstatusrearright': Enum('door_status_rearright', 'Status of the rear right door',states=['open','closed']),
-            'interiorLightsFront:': Enum('interior_lights_Front:', 'Status of the interior front light',states=['on','off']),
+            'interiorLightsFront': Enum('interior_lights_Front:', 'Status of the interior front light',states=['on','off']),
             'interiorLightsRear': Enum('interior_lights_Rear', 'Status of the interior rear light',states=['on','off']),
             'doorlockstatusvehicle': Gauge('door_lockstatus_vehicle', 'Vehicle lock status'),
             'doorlockstatusdecklid': Enum('door_lockstatus_decklid', 'Lock status of the deck lid',states=['locked','unlocked']),

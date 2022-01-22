@@ -1,0 +1,42 @@
+
+name: Build Docker image
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: "ubuntu-latest"
+    env:
+      DOCKER_REGISTRY: docker.io
+      DOCKER_IMAGE: pyguy/mercedes-a180-prom-exporter
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_TARGET_PLATFORM: linux/arm/v7
+    steps:
+    - name: Checkout the code
+      uses: actions/checkout@v1
+    - name: Set up Docker Buildx
+      uses: crazy-max/ghaction-docker-buildx@v2
+      with:
+        version: latest
+    - name: Prepare
+      if: success()
+      id: prepare
+      run: |
+        echo ::set-output name=docker_platform::${DOCKER_TARGET_PLATFORM}
+        echo ::set-output name=docker_image::${DOCKER_REGISTRY}/${DOCKER_IMAGE}
+        echo ::set-output name=release_version::${GITHUB_REF#refs/*/}
+    - name: Docker Login
+      if: success()
+      run: |
+        echo "${DOCKER_PASSWORD}" | docker login ${DOCKER_REGISTRY} --username "${DOCKER_USERNAME}" --password-stdin
+    - name: Run Buildx (push image)
+      if: success()
+      run: |
+        docker buildx build \
+        --platform ${{ steps.prepare.outputs.docker_platform }} \
+        --tag ${{ steps.prepare.outputs.docker_image }}:latest \
+        --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.release_version }} \
+        --file ./Dockerfile \
+        --output type=image,push=true .
