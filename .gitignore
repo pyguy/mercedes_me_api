@@ -3,3 +3,12 @@ __pycache__
 .mercedesme_token
 .mercedesme_resources
 *.pyc
+build
+dist
+*.egg-info
+*.swp
+.coverage.*
+.coverage
+.tox
+.*cache
+htmlcov

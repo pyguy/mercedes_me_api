@@ -9,10 +9,9 @@ https://github.com/xraver/mercedes_me_api/
 import logging
 import os
 
-from configobj import ConfigObj
-
 from const import *
 from oauth import MercedesMeOauth
+from environs import Env
 
 # Logger
 _LOGGER = logging.getLogger(__name__)
@@ -24,45 +23,42 @@ class MercedesMeConfig:
     # Init
     ########################
     def __init__(self):
-        self.config_file = CONFIG_FILE
-
+        self.env = Env()
+        self.config_file = self.env("CONFIG_FILE",default=CONFIG_FILE)
+        self.env.read_env(self.config_file, recurse=False)
+    
     ########################
     # Read Configuration
     ########################
     def ReadConfig(self):
         # Read Config from file
         if not os.path.isfile(self.config_file):
-            _LOGGER.error(f"Credential File {self.config_file} not found")
-            return False
-        try:
-            f = ConfigObj(self.config_file)
-        except Exception:
-            _LOGGER.error(f"Wrong {self.config_file} file found")
-            return False
+            _LOGGER.warn(f"Credential File {self.config_file} not found, using environment vars instead")
+
         # Client ID
-        self.client_id = f.get(CONF_CLIENT_ID)
+        self.client_id = self.env(CONF_CLIENT_ID)
         if not self.client_id:
             _LOGGER.error(f"No {CONF_CLIENT_ID} found in the configuration")
             return False
+        
         # Client Secret
-        self.client_secret = f.get(CONF_CLIENT_SECRET)
+        self.client_secret = self.env(CONF_CLIENT_SECRET)
         if not self.client_secret:
             _LOGGER.error(f"No {CONF_CLIENT_SECRET} found in the configuration")
             return False
+        
         # Vehicle ID
-        self.vin = f.get(CONF_VEHICLE_ID)
+        self.vin = self.env(CONF_VEHICLE_ID)
         if not self.vin:
             _LOGGER.error(f"No {CONF_VEHICLE_ID} found in the configuration")
             return False
+        
         # Enable Resources File (optional)
-        valueFromFile = f.get(CONF_ENABLE_RESOURCES_FILE)
-        if (valueFromFile == "true") | (valueFromFile == "True"):
-            self.enable_resources_file = True
-        else:
-            self.enable_resources_file = False
+        self.enable_resources_file = self.env.bool(CONF_ENABLE_RESOURCES_FILE, False)
+        
         # Read Token
         self.token = MercedesMeOauth(self.client_id, self.client_secret)
         if not self.token.ReadToken():
             return False
-
+        
         return True

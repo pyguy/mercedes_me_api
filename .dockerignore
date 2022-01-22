@@ -1,0 +1,6 @@
+.mercedesme_*
+__pycache__
+*.pyc
+.github
+.git
+custom_components
