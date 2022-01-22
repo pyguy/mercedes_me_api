@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  mercedesa180exp:
+    image: pyguy/mercedes-a180-prom-exporter 
+    ports:
+      - 8080:8080
+    environment:
+      - EXPORTER_PORT=8080
+      - CONFIG_FILE=/app/secrets/.mercedesme_config
+      - TOKEN_FILE=/app/secrets/.mercedesme_token
+    volumes:
+      - ./.mercedesme_config:/app/secrets/.mercedesme_config
+      - ./.mercedesme_token:/app/secrets/.mercedesme_token
+    restart: unless-stopped
+

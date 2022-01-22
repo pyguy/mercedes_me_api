@@ -90,14 +90,6 @@ class MercedesMeData:
 def ParseInput():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-l",
-        "--address",
-        action="store",
-        type=str,
-        default=os.getenv("EXPORTER_ADDR", "localhost"),
-        help="Prometheus listening address (Default: '' - all interfaces)",
-    )
-    parser.add_argument(
         "-p",
         "--port",
         type=int,
@@ -135,7 +127,7 @@ if __name__ == "__main__":
         exit(1)
 
     # Start up the server to expose the metrics.
-    _LOGGER.info(f"Starting exporter with address={args.address}:{args.port}")
-    start_http_server(port=args.port, addr=args.address)
+    _LOGGER.info(f"Starting exporter on :{args.port}")
+    start_http_server(args.port)
 
     data.run_metrics_loop()
