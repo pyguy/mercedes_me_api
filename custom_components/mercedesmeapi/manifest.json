@@ -5,5 +5,6 @@
     "issue_tracker": "https://github.com/xraver/mercedes_me_api/issues",
     "config_flow": false,
     "version": "0.11",
+    "iot_class": "cloud_polling",
     "codeowners": [ "@xraver" ]
 }
