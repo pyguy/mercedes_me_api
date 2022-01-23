@@ -10,13 +10,13 @@ import argparse
 import logging
 import os
 import sys
+import time
+
+from prometheus_client import Enum, Gauge, start_http_server
 
 from config import MercedesMeConfig
 from const import *
 from resources import MercedesMeResources
-
-from prometheus_client import start_http_server, Gauge, Enum
-import time
 
 # Logger
 logging_format = logging.Formatter("[%(levelname)s] [%(asctime)s]: %(message)s")
@@ -24,7 +24,7 @@ handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(logging_format)
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(handler)
-_LOGGER.setLevel(logging.getLevelName(os.getenv("LOG_LEVEL","INFO")))
+_LOGGER.setLevel(logging.getLevelName(os.getenv("LOG_LEVEL", "INFO")))
 
 
 class MercedesMeData:
@@ -37,18 +37,56 @@ class MercedesMeData:
 
         # Prometheus metrics to collect
         self.metrics = {
-            'tanklevelpercent': Gauge('mercedes_tank_level_percent', 'Liquid fuel tank level (Percent)'),
-            'doorstatusfrontleft': Enum('mercedes_door_status_frontleft', 'Status of the front left door',states=['open','closed']),
-            'doorstatusfrontright': Enum('mercedes_door_status_frontright', 'Status of the front right door',states=['open','closed']),
-            'doorstatusrearleft': Enum('mercedes_door_status_rearleft', 'Status of the rear left door',states=['open','closed']),
-            'doorstatusrearright': Enum('mercedes_door_status_rearright', 'Status of the rear right door',states=['open','closed']),
-            'interiorLightsFront': Enum('mercedes_interior_lights_Front', 'Status of the interior front light',states=['on','off']),
-            'interiorLightsRear': Enum('mercedes_interior_lights_Rear', 'Status of the interior rear light',states=['on','off']),
-            'doorlockstatusvehicle': Gauge('mercedes_door_lockstatus_vehicle', 'Vehicle lock status'),
-            'doorlockstatusdecklid': Enum('mercedes_door_lockstatus_decklid', 'Lock status of the deck lid',states=['locked','unlocked']),
-            'doorlockstatusgas': Enum('mercedes_door_lockstatus_gas', 'Status of gas tank door lock',states=['locked','unlocked']),
-            'positionHeading': Gauge('mercedes_position_heading', 'Vehicle heading position (Degrees)'),
-            'odo': Gauge('mercedes_odometer', 'Odometer (KM)')
+            "tanklevelpercent": Gauge(
+                "mercedes_tank_level_percent", "Liquid fuel tank level (Percent)"
+            ),
+            "doorstatusfrontleft": Enum(
+                "mercedes_door_status_frontleft",
+                "Status of the front left door",
+                states=["open", "closed"],
+            ),
+            "doorstatusfrontright": Enum(
+                "mercedes_door_status_frontright",
+                "Status of the front right door",
+                states=["open", "closed"],
+            ),
+            "doorstatusrearleft": Enum(
+                "mercedes_door_status_rearleft",
+                "Status of the rear left door",
+                states=["open", "closed"],
+            ),
+            "doorstatusrearright": Enum(
+                "mercedes_door_status_rearright",
+                "Status of the rear right door",
+                states=["open", "closed"],
+            ),
+            "interiorLightsFront": Enum(
+                "mercedes_interior_lights_Front",
+                "Status of the interior front light",
+                states=["on", "off"],
+            ),
+            "interiorLightsRear": Enum(
+                "mercedes_interior_lights_Rear",
+                "Status of the interior rear light",
+                states=["on", "off"],
+            ),
+            "doorlockstatusvehicle": Gauge(
+                "mercedes_door_lockstatus_vehicle", "Vehicle lock status"
+            ),
+            "doorlockstatusdecklid": Enum(
+                "mercedes_door_lockstatus_decklid",
+                "Lock status of the deck lid",
+                states=["locked", "unlocked"],
+            ),
+            "doorlockstatusgas": Enum(
+                "mercedes_door_lockstatus_gas",
+                "Status of gas tank door lock",
+                states=["locked", "unlocked"],
+            ),
+            "positionHeading": Gauge(
+                "mercedes_position_heading", "Vehicle heading position (Degrees)"
+            ),
+            "odo": Gauge("mercedes_odometer", "Odometer (KM)"),
         }
         self.pending_requests = Gauge("app_requests_pending", "Pending requests")
         self.total_uptime = Gauge("app_uptime", "Uptime")
@@ -72,18 +110,25 @@ class MercedesMeData:
             if res._valid:
                 _LOGGER.debug(f"{res._name}: {res._state}")
                 try:
-                    if res._state in ['true','false']:
-                        if 'lock' in res._name:
-                            self.metrics[res._name].state('locked' if res._state == 'false' else 'unlocked')
-                        elif 'Light' in res._name:
-                            self.metrics[res._name].state('off' if res._state == 'false' else 'on')
+                    if res._state in ["true", "false"]:
+                        if "lock" in res._name:
+                            self.metrics[res._name].state(
+                                "locked" if res._state == "false" else "unlocked"
+                            )
+                        elif "Light" in res._name:
+                            self.metrics[res._name].state(
+                                "off" if res._state == "false" else "on"
+                            )
                         else:
-                            self.metrics[res._name].state('closed' if res._state == 'false' else 'open')
+                            self.metrics[res._name].state(
+                                "closed" if res._state == "false" else "open"
+                            )
                         continue
                     self.metrics[res._name].set(res._state)
                 except KeyError as e:
                     _LOGGER.error(f"Key Error: {e}")
-        
+
+
 ########################
 # Parse Input
 ########################
@@ -112,9 +157,7 @@ if __name__ == "__main__":
     polling_interval_seconds = int(os.getenv("POLLING_INTERVAL_SECONDS", "5"))
 
     # Creating Data Structure
-    data = MercedesMeData(
-        polling_interval_seconds=polling_interval_seconds
-    )
+    data = MercedesMeData(polling_interval_seconds=polling_interval_seconds)
 
     # Reading Configuration
     if not data.mercedesConfig.ReadConfig():

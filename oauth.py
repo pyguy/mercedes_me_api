@@ -39,7 +39,7 @@ class MercedesMeOauth:
         # Client Secret
         self.client_secret = client_secret
         # Token File
-        self.token_file = os.getenv("TOKEN_FILE",TOKEN_FILE)
+        self.token_file = os.getenv("TOKEN_FILE", TOKEN_FILE)
         # Base64
         b64_str = f"{client_id}:{client_secret}"
         b64_bytes = base64.b64encode(b64_str.encode("ascii"))
